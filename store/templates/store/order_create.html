@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оформление заказа - Магазин стройматериалов</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            margin-bottom: 20px;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+        }
+        nav ul li {
+            margin-right: 20px;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .order-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        .form-section, .order-summary {
+            background: #fff;
+            padding: 25px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .form-section h2, .order-summary h2 {
+            margin-top: 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .order-items {
+            margin-bottom: 20px;
+        }
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .order-total {
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 20px;
+            text-align: right;
+        }
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .submit-btn:hover {
+            background: #218838;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <h1>Магазин стройматериалов</h1>
+            <ul>
+                <li><a href="{% url 'store:index' %}">Главная</a></li>
+                <li><a href="{% url 'store:category_list' %}">Категории</a></li>
+                <li><a href="{% url 'store:product_list' %}">Все товары</a></li>
+                <li><a href="{% url 'store:cart_detail' %}">Корзина</a></li>
+                <li><a href="/admin/">Админка</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h1>Оформление заказа</h1>
+        
+        <form method="post" action="{% url 'store:order_create' %}">
+            {% csrf_token %}
+            <div class="order-form">
+                <div class="form-section">
+                    <h2>Данные для доставки</h2>
+                    <div class="form-group">
+                        <label for="first_name">Имя*</label>
+                        <input type="text" id="first_name" name="first_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="last_name">Фамилия*</label>
+                        <input type="text" id="last_name" name="last_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email*</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Телефон*</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Адрес доставки*</label>
+                        <textarea id="address" name="address" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="postal_code">Почтовый индекс (необязательно)</label>
+                        <input type="text" id="postal_code" name="postal_code">
+                    </div>
+                    <div class="form-group">
+                        <label for="city">Город*</label>
+                        <input type="text" id="city" name="city" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="note">Примечание к заказу (необязательно)</label>
+                        <textarea id="note" name="note" rows="3"></textarea>
+                    </div>
+                </div>
+                
+                <div class="order-summary">
+                    <h2>Ваш заказ</h2>
+                    <div class="order-items">
+                        {% for item in cart_items %}
+                            <div class="order-item">
+                                <span>{{ item.quantity }} × {{ item.product.name }}</span>
+                                <span>{{ item.total_price }} руб.</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="order-total">
+                        Итого к оплате: {{ total_price }} руб.
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Оформить заказ</button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Магазин стройматериалов</p>
+    </footer>
+</body>
+</html> 

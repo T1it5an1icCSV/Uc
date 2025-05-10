@@ -1,0 +1,76 @@
+/* Product card styles */
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+/* Cart table styles */
+.table th {
+    background-color: #f8f9fa;
+}
+
+/* Order status badges */
+.badge {
+    font-size: 0.9em;
+    padding: 0.5em 0.8em;
+}
+
+/* Product detail image */
+.product-detail-img {
+    max-height: 400px;
+    object-fit: contain;
+}
+
+/* Footer styles */
+footer {
+    margin-top: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card-img-top {
+        height: 150px;
+    }
+    
+    .product-detail-img {
+        max-height: 300px;
+    }
+}
+
+/* Custom button styles */
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+/* Form styles */
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Alert styles */
+.alert {
+    border-radius: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+/* Navigation styles */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+/* Card hover effect */
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,.1);
+} 

@@ -1,0 +1,46 @@
+{% extends "store/base.html" %}
+
+{% block title %}
+    {% if category %}{{ category.name }}{% else %}Все товары{% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-3">
+            <h3>Категории</h3>
+            <ul class="list-group">
+                <li class="list-group-item {% if not category %}active{% endif %}">
+                    <a href="{% url 'store:product_list' %}" class="text-decoration-none {% if not category %}text-white{% endif %}">
+                        Все товары
+                    </a>
+                </li>
+                {% for c in categories %}
+                    <li class="list-group-item {% if category.slug == c.slug %}active{% endif %}">
+                        <a href="{{ c.get_absolute_url }}" class="text-decoration-none {% if category.slug == c.slug %}text-white{% endif %}">
+                            {{ c.name }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-md-9">
+            <h1>{% if category %}{{ category.name }}{% else %}Все товары{% endif %}</h1>
+            <div class="row">
+                {% for product in products %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ product.name }}</h5>
+                                <p class="card-text">{{ product.price }} ₽</p>
+                                <a href="{{ product.get_absolute_url }}" class="btn btn-primary">Подробнее</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %} 

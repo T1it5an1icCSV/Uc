@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Товары - Магазин стройматериалов</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            margin-bottom: 20px;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+        }
+        nav ul li {
+            margin-right: 20px;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .content {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+        }
+        .sidebar {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .sidebar h3 {
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .category-list {
+            list-style: none;
+            padding: 0;
+        }
+        .category-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .category-list a {
+            color: #333;
+            text-decoration: none;
+            display: block;
+        }
+        .category-list a:hover {
+            color: #007bff;
+        }
+        .category-list a.active {
+            color: #007bff;
+            font-weight: bold;
+        }
+        .search-form {
+            margin-bottom: 20px;
+        }
+        .search-form input {
+            width: 70%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .search-form button {
+            padding: 8px 15px;
+            background: #333;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            background: #fff;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .product-info {
+            padding: 15px;
+        }
+        .product-info h3 {
+            margin-top: 0;
+            font-size: 18px;
+        }
+        .product-price {
+            font-weight: bold;
+            color: #333;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .product-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .btn {
+            padding: 8px 12px;
+            text-align: center;
+            border-radius: 4px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .btn-primary {
+            background-color: #007bff;
+        }
+        .btn-success {
+            background-color: #28a745;
+        }
+        .pagination {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .pagination a, .pagination span {
+            display: inline-block;
+            padding: 8px 12px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+        }
+        .pagination .current {
+            background: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <h1>Магазин стройматериалов</h1>
+            <ul>
+                <li><a href="{% url 'store:index' %}">Главная</a></li>
+                <li><a href="{% url 'store:category_list' %}">Категории</a></li>
+                <li><a href="{% url 'store:product_list' %}">Все товары</a></li>
+                <li><a href="{% url 'store:cart_detail' %}">Корзина</a></li>
+                <li><a href="/admin/">Админка</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <form method="get" action="{% url 'store:product_list' %}" class="search-form">
+            <input type="text" name="search" value="{{ search_query }}" placeholder="Поиск товаров...">
+            <button type="submit">Найти</button>
+        </form>
+        
+        <div class="content">
+            <aside class="sidebar">
+                <h3>Категории</h3>
+                <ul class="category-list">
+                    <li>
+                        <a href="{% url 'store:product_list' %}" class="{% if not category %}active{% endif %}">
+                            Все товары
+                        </a>
+                    </li>
+                    {% for cat in categories %}
+                        <li>
+                            <a href="{% url 'store:category_detail' cat.id %}" class="{% if category.id == cat.id %}active{% endif %}">
+                                {{ cat.name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </aside>
+            
+            <div class="main-content">
+                <h1>{% if category %}{{ category.name }}{% else %}Все товары{% endif %}</h1>
+                
+                {% if search_query %}
+                    <p>Результаты поиска для "{{ search_query }}"</p>
+                {% endif %}
+                
+                <div class="products-grid">
+                    {% for product in products %}
+                        <div class="product-card">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                            {% endif %}
+                            <div class="product-info">
+                                <h3>{{ product.name }}</h3>
+                                <p>{{ product.description|truncatewords:15 }}</p>
+                                <div class="product-price">{{ product.price }} руб.</div>
+                                <div class="product-buttons">
+                                    <a href="{% url 'store:product_detail' product.id %}" class="btn btn-primary">Подробнее</a>
+                                    <a href="{% url 'store:cart_add' product.id %}" class="btn btn-success">В корзину</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>Товары не найдены.</p>
+                    {% endfor %}
+                </div>
+                
+                {% if is_paginated %}
+                    <div class="pagination">
+                        {% if page_obj.has_previous %}
+                            <a href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}">&laquo;</a>
+                            <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">Назад</a>
+                        {% endif %}
+                        
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <span class="current">{{ num }}</span>
+                            {% else %}
+                                <a href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">Вперед</a>
+                            <a href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}">&raquo;</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Магазин стройматериалов</p>
+    </footer>
+</body>
+</html> 
